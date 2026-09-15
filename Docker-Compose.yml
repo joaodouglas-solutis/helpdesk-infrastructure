@@ -31,6 +31,22 @@ services:
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
 
+  user-service:
+    build:
+      context: ../user-service
+      dockerfile: Dockerfile
+    container_name: helpdesk-user-service
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: jdbc:postgresql://postgres:5432/user_db
+      DATABASE_USER: ${POSTGRES_USER}
+      DATABASE_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "8081:8081"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
 volumes:
   postgres_data:
   rabbitmq_data:
