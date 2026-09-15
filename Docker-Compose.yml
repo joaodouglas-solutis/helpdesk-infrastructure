@@ -47,6 +47,24 @@ services:
       postgres:
         condition: service_healthy
 
+  ticket-service:
+    build:
+      context: ../ticket-service
+      dockerfile: Dockerfile
+    container_name: helpdesk-ticket-service
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: jdbc:postgresql://postgres:5432/ticket_db
+      DATABASE_USER: ${POSTGRES_USER}
+      DATABASE_PASSWORD: ${POSTGRES_PASSWORD}
+      USER_SERVICE_URL: http://user-service:8081
+    ports:
+      - "8082:8082"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      user-service:
+        condition: service_started
 volumes:
   postgres_data:
   rabbitmq_data:
