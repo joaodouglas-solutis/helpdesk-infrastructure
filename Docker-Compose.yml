@@ -91,6 +91,25 @@ services:
         condition: service_healthy
       rabbitmq:
         condition: service_started
+  api-gateway:
+    build:
+      context: ../api-gateway
+      dockerfile: Dockerfile
+    container_name: helpdesk-api-gateway
+    restart: unless-stopped
+    environment:
+      USER_SERVICE_URL: http://user-service:8081
+      TICKET_SERVICE_URL: http://ticket-service:8082
+      NOTIFICATION_SERVICE_URL: http://notification-service:8083
+    ports:
+      - "8080:8080"
+    depends_on:
+      user-service:
+        condition: service_started
+      ticket-service:
+        condition: service_started
+      notification-service:
+        condition: service_started
 volumes:
   postgres_data:
   rabbitmq_data:
